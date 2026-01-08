@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String   @db.Text
+  basePrice   Decimal  @db.Decimal(10, 2)
+  category    String?
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  variations  ProductVariation[]
+}
+
+model ProductVariation {
+  id          String   @id @default(cuid())
+  productId   String
+  colorName   String
+  colorHex    String
+  images      String   @db.Text  // JSON array of image URLs
+  stock       Int      @default(0)
+  sku         String   @unique
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItems  OrderItem[]
+
+  @@index([productId])
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+  shippingAddress String      @db.Text
+  city            String
+  postcode        String
+  status          OrderStatus @default(PENDING)
+  subtotal        Decimal     @db.Decimal(10, 2)
+  shipping        Decimal     @db.Decimal(10, 2)
+  total           Decimal     @db.Decimal(10, 2)
+  billplzBillId   String?
+  billplzUrl      String?
+  paidAt          DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  items           OrderItem[]
+}
+
+model OrderItem {
+  id          String            @id @default(cuid())
+  orderId     String
+  variationId String
+  quantity    Int
+  price       Decimal           @db.Decimal(10, 2)
+  colorName   String
+  productName String
+  order       Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variation   ProductVariation  @relation(fields: [variationId], references: [id])
+
+  @@index([orderId])
+  @@index([variationId])
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}

@@ -1,0 +1,39 @@
+.container {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+}
+
+.swatch {
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all var(--transition-fast);
+    position: relative;
+    padding: 0;
+}
+
+.swatch:hover {
+    transform: scale(1.15);
+}
+
+.swatch.active {
+    border-color: var(--color-text);
+    box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-text);
+}
+
+/* Size variants */
+.sm {
+    width: 20px;
+    height: 20px;
+}
+
+.md {
+    width: 28px;
+    height: 28px;
+}
+
+.lg {
+    width: 36px;
+    height: 36px;
+}
