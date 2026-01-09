@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
-import mariadb from "mariadb";
 
 const globalForPrisma = globalThis as unknown as {
     prisma: PrismaClient | undefined;
@@ -21,8 +20,7 @@ const setupPrisma = () => {
         throw new Error("DATABASE_URL is not set");
     }
 
-    const pool = mariadb.createPool(connectionString);
-    const adapter = new PrismaMariaDb(pool);
+    const adapter = new PrismaMariaDb(connectionString);
     const client = new PrismaClient({
         adapter,
         log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
