@@ -2,25 +2,25 @@
 
 import styles from "./ColorSwatch.module.css";
 
-interface Variation {
+export interface SwatchVariation {
     id: string;
     colorName: string;
     colorHex: string;
 }
 
-interface ColorSwatchProps {
-    variations: Variation[];
+interface ColorSwatchProps<T extends SwatchVariation> {
+    variations: T[];
     selectedId: string;
-    onSelect: (variation: Variation) => void;
+    onSelect: (variation: T) => void;
     size?: "sm" | "md" | "lg";
 }
 
-export default function ColorSwatch({
+export default function ColorSwatch<T extends SwatchVariation>({
     variations,
     selectedId,
     onSelect,
     size = "md",
-}: ColorSwatchProps) {
+}: ColorSwatchProps<T>) {
     return (
         <div className={styles.container}>
             {variations.map((variation) => (
