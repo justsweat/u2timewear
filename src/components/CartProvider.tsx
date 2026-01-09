@@ -23,6 +23,8 @@ interface CartContextType {
     subtotal: number;
     shipping: number;
     total: number;
+    isCartOpen: boolean;
+    toggleCart: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -33,6 +35,7 @@ const FREE_SHIPPING_THRESHOLD = 200.0;
 export function CartProvider({ children }: { children: ReactNode }) {
     const [items, setItems] = useState<CartItem[]>([]);
     const [isHydrated, setIsHydrated] = useState(false);
+    const [isCartOpen, setIsCartOpen] = useState(false);
 
     // Load cart from localStorage on mount
     useEffect(() => {
@@ -66,6 +69,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             }
             return [...prev, { ...newItem, quantity: 1 }];
         });
+        setIsCartOpen(true);
     };
 
     const removeItem = (variationId: string) => {
@@ -88,6 +92,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setItems([]);
     };
 
+    const toggleCart = () => setIsCartOpen((prev) => !prev);
+
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
     const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FLAT;
@@ -105,6 +111,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 subtotal,
                 shipping,
                 total,
+                isCartOpen,
+                toggleCart,
             }}
         >
             {children}
